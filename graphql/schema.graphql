@@ -9,7 +9,9 @@ input InputDemo {
     description: String!,
 }
 
-type Query {}
+type Query {
+    demo: [Demo!]
+}
 
 schema {
     query: Query
@@ -18,7 +20,7 @@ schema {
 }
 
 type Mutation {
-    addDemo(input: InputDemo): [Demo!]
+    addDemo(input: InputDemo): Demo!
 }
 
 type Subscription {
