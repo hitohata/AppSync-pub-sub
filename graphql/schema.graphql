@@ -1,0 +1,26 @@
+type Demo {
+    id: ID!
+    description: String!,
+    datetime: AWSDateTime!
+}
+
+input InputDemo {
+     id: ID
+    description: String!,
+}
+
+type Query {}
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+type Mutation {
+    addDemo(input: InputDemo): [Demo!]
+}
+
+type Subscription {
+    onAddDemo(id: ID): Demo @aws_subscribe(mutations: ["addDemo"])
+}
