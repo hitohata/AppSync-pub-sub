@@ -1,3 +1,6 @@
+scalar AWSDateTime
+directive @aws_subscribe(mutations: [String!]!) on FIELD_DEFINITION
+
 type Demo {
     id: ID!
     description: String!,

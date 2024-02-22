@@ -1,0 +1,7 @@
+mutation addNewDemo ($description: String = "", $id: ID = "") {
+  addDemo(input: {description: $description, id: $id}) {
+    datetime
+    description
+    id
+  }
+}

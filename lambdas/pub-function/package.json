@@ -1,0 +1,25 @@
+{
+  "name": "pub-function",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "generte": "graphql-codegen",
+    "codegen": "graphql-codegen --config codegen.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/client-preset": "^4.2.3",
+    "@graphql-codegen/typescript": "4.0.5",
+    "@graphql-codegen/typescript-graphql-request": "^6.2.0",
+    "@types/node": "^20.11.19",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.9.5",
+    "graphql": "^16.8.1",
+    "hono": "^4.0.5"
+  }
+}
