@@ -13,24 +13,45 @@ async fn function_handler(event: LambdaEvent<Value>) -> Result<Value, Error> {
     // Extract some useful information from the request
     println!("{:?}", event.payload);
 
-    let id = match &event.payload["arguments"]["input"]["id"].is_string() {
-        true => event.payload["arguments"]["input"]["id"].as_str(),
-        false => Some("1")
-    };
-
-    let description = &event.payload["arguments"]["input"]["description"];
-
-    if !description.is_string() {
-        panic!("description is not provided")
-    }
-
     let datetime = Local::now().to_rfc3339();
 
+    let field_name = event.payload["info"]["fieldName"].to_owned();
+
+    println!("field_name: {:?}", field_name);
+    println!("addDemo: {:?}", json!("addDemo"));
+    println!("condition: {:?}", field_name == json!("addDemo"));
+
+    if field_name == json!("addDemo") {
+
+        let id = match &event.payload["arguments"]["input"]["id"].is_string() {
+            true => event.payload["arguments"]["input"]["id"].as_str(),
+            false => Some("1")
+        };
+
+        let description = &event.payload["arguments"]["input"]["description"];
+
+
+        if !description.is_string() {
+            panic!("description is not provided")
+        }
+
+
+        let return_val = json!({
+            "id": id.unwrap_or("1"),
+            "description": description,
+            "datetime": datetime
+        });
+
+        return Ok(return_val)
+
+    }
+
     let return_val = json!({
-        "id": id.unwrap_or("1"),
-        "description": description,
-        "datetime": datetime
-    });
+            "id": "1".to_string(),
+            "description": "default description".to_string(),
+            "datetime": datetime
+        });
+
 
     Ok(return_val)
 }

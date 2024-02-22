@@ -84,6 +84,9 @@ export class CdkStack extends cdk.Stack {
         {
           typeName: 'Mutation',
           fieldName: 'addDemo',
+        }, {
+          typeName: 'Query',
+          fieldName: 'demo',
         }
     ]
 

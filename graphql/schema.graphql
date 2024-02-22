@@ -13,7 +13,7 @@ input InputDemo {
 }
 
 type Query {
-    demo: [Demo!]
+    demo: Demo!
 }
 
 schema {
