@@ -1,11 +1,13 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import {UserPool} from "aws-cdk-lib/aws-cognito";
+import { UserPool } from "aws-cdk-lib/aws-cognito";
 import * as appsync from "aws-cdk-lib/aws-appsync"
 import * as path from "path";
 import { RustFunction } from 'cargo-lambda-cdk'
-import {IFunction} from "aws-cdk-lib/aws-lambda";
-import {GraphqlApi} from "aws-cdk-lib/aws-appsync";
+import { IFunction } from "aws-cdk-lib/aws-lambda";
+import { GraphqlApi } from "aws-cdk-lib/aws-appsync";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import * as iam from "aws-cdk-lib/aws-iam";
 
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -13,9 +15,12 @@ export class CdkStack extends cdk.Stack {
 
     const userPool = this.userPool();
     const pubFunction = this.pubFunction();
+    const apiGatewayApi = this.apiGatewayApi(pubFunction);
     const gqlMutationFunction = this.gqlMutationFunction();
-    const api = this.appSync(userPool);
-    this.attachResolver(gqlMutationFunction, api);
+    const gqlApi = this.appSync(userPool);
+    pubFunction.addEnvironment('URL', gqlApi.graphqlUrl);
+    this.attachResolver(gqlMutationFunction, gqlApi);
+    this.grantAccessToGql(gqlApi);
   }
 
   userPool() {
@@ -27,17 +32,35 @@ export class CdkStack extends cdk.Stack {
     })
   }
 
+  apiGatewayApi(pubFunction: IFunction) {
+    return new cdk.aws_apigateway.LambdaRestApi(this, 'apiGatewayApi', {
+      handler: pubFunction
+    })
+  }
+
   gqlMutationFunction() {
     return new RustFunction(this, 'gqlMutationFunction', {
+      functionName: "gql-mutation-function",
       manifestPath: path.join(__dirname, '../../lambdas/gql-mutation-function/Cargo.toml'),
       runtime: 'provided.al2023'
     })
   }
 
   pubFunction() {
-    return new RustFunction(this, 'pubFunction', {
-      manifestPath: path.join(__dirname, '../../lambdas/pub-function/Cargo.toml'),
-      runtime: 'provided.al2023'
+    if (!process.env.KEY) throw Error("API KEY")
+    return new NodejsFunction(this, 'pubFunction', {
+      functionName: "pub-function",
+      entry: path.join(__dirname, '../../lambdas/pub-function/src/index.ts'),
+      handler: 'handler',
+      runtime: cdk.aws_lambda.Runtime.NODEJS_20_X,
+      depsLockFilePath: path.join(
+          __dirname,
+          "../../lambdas/pub-function/package-lock.json",
+      ),
+      environment: {
+        KEY: process.env.KEY!,
+        REGION: this.region,
+      }
     })
   }
 
@@ -70,5 +93,11 @@ export class CdkStack extends cdk.Stack {
         fieldName,
       })
     }
+  }
+  grantAccessToGql(gqlApi: GraphqlApi) {
+    const role = new iam.Role(this, "lambda-role", {
+      assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+    });
+    gqlApi.grant(role, appsync.IamResource.custom("types/*"), "appsync:GraphQL");
   }
 }

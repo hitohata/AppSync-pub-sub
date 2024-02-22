@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.9.5",
+    "aws-appsync": "^4.1.10",
     "graphql": "^16.8.1",
     "hono": "^4.0.5"
   }

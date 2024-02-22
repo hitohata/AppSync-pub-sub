@@ -55,17 +55,17 @@ export type SubscriptionOnAddDemoArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
 };
 
-export type MyMutationMutationVariables = Exact<{
+export type AddNewDemoMutationVariables = Exact<{
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
 }>;
 
 
-export type MyMutationMutation = { __typename?: 'Mutation', addDemo: { __typename?: 'Demo', datetime: any, description: string, id: string } };
+export type AddNewDemoMutation = { __typename?: 'Mutation', addDemo: { __typename?: 'Demo', datetime: any, description: string, id: string } };
 
 
-export const MyMutationDocument = gql`
-    mutation MyMutation($description: String = "", $id: ID = "") {
+export const AddNewDemoDocument = gql`
+    mutation addNewDemo($description: String = "", $id: ID = "") {
   addDemo(input: {description: $description, id: $id}) {
     datetime
     description
@@ -81,8 +81,8 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    MyMutation(variables?: MyMutationMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<MyMutationMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<MyMutationMutation>(MyMutationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'MyMutation', 'mutation', variables);
+    addNewDemo(variables?: AddNewDemoMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<AddNewDemoMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AddNewDemoMutation>(AddNewDemoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'addNewDemo', 'mutation', variables);
     }
   };
 }
