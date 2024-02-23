@@ -1,0 +1,7 @@
+query GetDemo {
+  demo {
+    description
+    datetime
+    id
+  }
+}

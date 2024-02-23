@@ -1,0 +1,7 @@
+subscription DemoSubscription($id: ID = "") {
+  onAddDemo(id: $id) {
+    datetime
+    description
+    id
+  }
+}
