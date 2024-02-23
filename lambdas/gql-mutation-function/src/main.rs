@@ -17,10 +17,6 @@ async fn function_handler(event: LambdaEvent<Value>) -> Result<Value, Error> {
 
     let field_name = event.payload["info"]["fieldName"].to_owned();
 
-    println!("field_name: {:?}", field_name);
-    println!("addDemo: {:?}", json!("addDemo"));
-    println!("condition: {:?}", field_name == json!("addDemo"));
-
     if field_name == json!("addDemo") {
 
         let id = match &event.payload["arguments"]["input"]["id"].is_string() {
